@@ -1,3 +1,3 @@
-# PyBOMBS on top of Ubuntu Dockerfile
+# gnuradio/PyBOMBS/UHD/lxde/vnc on top of Ubuntu 14.04 Dockerfile
 
-For more information, check out https://github.com/stwunsch/docker-pybombs-gnuradio.
+This is a squashed version of Stefan Wunsch's https://github.com/stwunsch/docker-pybombs-gnuradio and friends.
