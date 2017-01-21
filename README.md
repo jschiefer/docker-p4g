@@ -1,6 +1,20 @@
-# gnuradio/PyBOMBS/UHD/lxde/vnc on top of Ubuntu 14.04 Dockerfile
+# Docker image for experimentation with Phase4Ground code
 
-This is a squashed version of Stefan Wunsch's https://github.com/stwunsch/docker-pybombs-gnuradio and friends.
+This is a based on Stefan Wunsch's https://github.com/stwunsch/docker-pybombs-gnuradio and friends.
+
+The docker image provides a 3.7.10 version of gnu radio, the UHD driver and a special collection of Phase4Ground 
+blocks. The image is based on Ubuntu 14.04.
+
+Build container
+-------------
+To build the container, clone this repository and build a docker image from it:
+```
+$ docker build -t 'myP4Gimage` .
+```
+This will create the image, which you should be able to see in your image list using
+```
+$ docker images
+```
 
 Run container
 -------------
@@ -11,9 +25,14 @@ part.
 
 You will be asked to set a password for the access via VNC.
 
-$ docker run -it --rm -p 5901:5901 -e USER=root \
-    stwunsch/docker-pybombs-gnuradio-vnc bash -c \
+Start a container, using the image that we just built:
+
+```
+$ docker run -it --rm -p 5901:5901 myP4Gimage bash -c \
     "vncserver :1 -geometry 1280x800 -depth 24 && tail -F /root/.vnc/*.log"
+```
+
+This starts the VNC server in the image and exposes it on port 5901.
 
 Connect via VNC client
 ----------------------
@@ -22,7 +41,9 @@ I assume that you are running the container on the same machine you are
 running the VNC client. Then you can connect via the ip address
 'localhost:5901'. For example using vncviewer:
 
+```
 $ vncviewer localhost:5901
+```
 
 Run GNU Radio Companion
 -----------------------
@@ -36,4 +57,6 @@ Install new GNU Radio Out-of-Tree modules
 The image contains a full PyBOMBS installation. So feel free to run PyBOMBS
 and install new packages. For example:
 
+```
 $ pybombs install gr-radar
+```
