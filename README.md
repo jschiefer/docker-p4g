@@ -28,7 +28,7 @@ You will be asked to set a password for the access via VNC.
 Start a container, using the image that we just built:
 
 ```
-$ docker run -it --rm -p 5901:5901 myP4Gimage bash -c \
+$ docker run -it --rm -p 5901:5901 -e USER=amsat p4g /bin/bash -c \
     "vncserver :1 -geometry 1280x800 -depth 24 && tail -F /root/.vnc/*.log"
 ```
 

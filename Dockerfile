@@ -23,9 +23,8 @@ RUN apt-get install -y \
 # Install PyBOMBS
 RUN pip install PyBOMBS
 
-# Switch user
+# Create user 
 RUN groupadd -r ${TheUser} && useradd -m -r -g ${TheUser} ${TheUser}
-USER ${TheUser}
 WORKDIR ${TheHomeDir}
 
 # Add recipes to PyBOMBS
@@ -34,7 +33,7 @@ RUN pybombs recipes add gr-etcetera git+https://github.com/gnuradio/gr-etcetera.
 
 # Setup environment
 RUN pybombs prefix init ${PyBOMBS_init} -a ${PyBOMBS_prefix}
-RUN echo "source "${PyBOMBS_init}"/setup_env.sh" > .bashrc
+RUN echo "source "${PyBOMBS_init}"/setup_env.sh" >> .bashrc
 
 # Install packages
 RUN pybombs -p ${PyBOMBS_prefix} -v install "uhd" && rm -rf ${PyBOMBS_init}/src/*
@@ -48,3 +47,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y lxde-core lxterminal tight
 
 # Expose ports.
 EXPOSE 5901
+
+# Change directory ownwership
+RUN chown ${TheUser}:${TheUser} ${PyBOMBS_init}
+
+# Switch user
+USER ${TheUser}
