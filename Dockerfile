@@ -4,8 +4,10 @@
 FROM ubuntu:14.04
 
 # Set prefix variables
+ENV TheUser amsat
+ENV TheHomeDir /home/${TheUser}
 ENV PyBOMBS_prefix myprefix
-ENV PyBOMBS_init /pybombs
+ENV PyBOMBS_init ${TheHomeDir}/pybombs
 
 # Update apt-get
 RUN apt-get update
@@ -14,11 +16,17 @@ RUN apt-get update
 RUN apt-get install -y \
         python-pip \
         python-yaml \
+        python-apt \
         python-setuptools \
         git-core
 
 # Install PyBOMBS
 RUN pip install PyBOMBS
+
+# Switch user
+RUN groupadd -r ${TheUser} && useradd -m -r -g ${TheUser} ${TheUser}
+USER ${TheUser}
+WORKDIR ${TheHomeDir}
 
 # Add recipes to PyBOMBS
 RUN pybombs recipes add gr-recipes git+https://github.com/gnuradio/gr-recipes.git
@@ -26,10 +34,12 @@ RUN pybombs recipes add gr-etcetera git+https://github.com/gnuradio/gr-etcetera.
 
 # Setup environment
 RUN pybombs prefix init ${PyBOMBS_init} -a ${PyBOMBS_prefix}
-RUN echo "source "${PyBOMBS_init}"/setup_env.sh" > /root/.bashrc
+RUN echo "source "${PyBOMBS_init}"/setup_env.sh" > .bashrc
 
 # Install packages
 RUN pybombs -p ${PyBOMBS_prefix} -v install "uhd" && rm -rf ${PyBOMBS_init}/src/*
+RUN pybombs -p ${PyBOMBS_prefix} -v install "rtl-sdr" && rm -rf ${PyBOMBS_init}/src/*
+RUN pybombs -p ${PyBOMBS_prefix} -v install "gr-osmosdr" && rm -rf ${PyBOMBS_init}/src/*
 RUN pybombs -p ${PyBOMBS_prefix} -v install --deps-only "gnuradio" && rm -rf ${PyBOMBS_init}/src/*
 RUN pybombs -p ${PyBOMBS_prefix} -v install --no-deps "gnuradio" && rm -rf ${PyBOMBS_init}/src/*
 

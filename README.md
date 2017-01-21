@@ -9,7 +9,7 @@ Build container
 -------------
 To build the container, clone this repository and build a docker image from it:
 ```
-$ docker build -t 'myP4Gimage` .
+$ docker build -t p4g --squash .
 ```
 This will create the image, which you should be able to see in your image list using
 ```
