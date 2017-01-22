@@ -23,8 +23,9 @@ RUN apt-get install -y \
 # Install PyBOMBS
 RUN pip install PyBOMBS
 
-# Create user 
-RUN groupadd -r ${TheUser} && useradd -m -r -g ${TheUser} ${TheUser}
+# Create user amsat, and enable sudo
+RUN groupadd -r ${TheUser} && useradd -m -r -g ${TheUser} ${TheUser} && usermod -aG sudo ${TheUser}
+RUN echo 'amsat ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 WORKDIR ${TheHomeDir}
 
 # Add recipes to PyBOMBS
@@ -34,7 +35,7 @@ RUN pybombs recipes add gr-etcetera git+https://github.com/gnuradio/gr-etcetera.
 # Setup environment
 RUN pybombs prefix init ${PyBOMBS_init} -a ${PyBOMBS_prefix}
 RUN echo "source "${PyBOMBS_init}"/setup_env.sh" >> .bashrc
-
+  
 # Install packages
 RUN pybombs -p ${PyBOMBS_prefix} -v install "uhd" && rm -rf ${PyBOMBS_init}/src/*
 RUN pybombs -p ${PyBOMBS_prefix} -v install "rtl-sdr" && rm -rf ${PyBOMBS_init}/src/*
